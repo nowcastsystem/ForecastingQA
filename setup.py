@@ -59,7 +59,7 @@ except:
 def read(fname):
 
     return codecs.open(os.path.join(os.path.dirname(__file__), fname)).read()
-
+#some change
 
 NAME = "quantaxis"
 """
@@ -67,13 +67,12 @@ NAME = "quantaxis"
 """
 PACKAGES = ["QUANTAXIS", "QUANTAXIS.QAFetch", "QUANTAXIS.QACmd", "QUANTAXIS.QAMarket", 'QUANTAXIS.QASetting', "QUANTAXIS.QACmd",
             "QUANTAXIS.QAApplication", "QUANTAXIS.QAEngine", "QUANTAXIS.QAData", 'QUANTAXIS.QAData.proto', "QUANTAXIS.QAAnalysis", 'QUANTAXIS.QASelector',
-            "QUANTAXIS.QASU", "QUANTAXIS.QAUtil", "QUANTAXIS.QAARP", "QUANTAXIS.QAIndicator"]
+            "QUANTAXIS.QASU", "QUANTAXIS.QAUtil", "QUANTAXIS.QAARP", "QUANTAXIS.QAIndicator", "QUANTAXIS.TSdata"]
 """
 
 """
 
 DESCRIPTION = "QUANTAXIS:Quantitative Financial Strategy Framework"
-
 with open("README_ENG.md", "r") as fh:
     LONG_DESCRIPTION = fh.read()
 
