@@ -3,7 +3,7 @@ import pandas as pd
 import pymongo
 import json
 import datetime
-from TSrawdata import TSrawdata
+from QUANTAXIS.TSData.TSRawdata import TSRawdata
 
 
 import numpy as np
@@ -30,7 +30,7 @@ result = result.drop(columns='code')
 result['date'] = result.index
 result = result.rename(columns={'close': 'y'})
 # print(result)
-rawdata = TSrawdata(result)
+rawdata = TSRawdata(result)
 # print(rawdata.data)
 
 #upload to mongodb
@@ -49,7 +49,7 @@ def getrawfrommongodb():
     outcome = pd.DataFrame(list(cursor))
     outcome = outcome.drop(columns = '_id')
     outcome['datetime'] = pd.to_datetime(outcome['datetime'])
-    rawdata = TSrawdata(outcome)
+    rawdata = TSRawdata(outcome)
     return rawdata
 rawdatafrommongo = getrawfrommongodb()
 print(rawdatafrommongo.data)
