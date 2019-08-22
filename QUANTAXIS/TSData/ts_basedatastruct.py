@@ -5,7 +5,8 @@ from QUANTAXIS.QAUtil import (
     QA_util_to_json_from_pandas
 )
 from QUANTAXIS.QAUtil.QADate import QA_util_to_datetime
-
+import pandas as pd
+from functools import lru_cache
 
 # todo 🛠基类名字 _quotation_base 小写是因为 不直接初始化， 建议改成抽象类
 
@@ -39,14 +40,10 @@ class _quotation_base():
         # dtype 参数 指定类 mongo 中 collection 的名字   ，
         # 🛠todo 检查 dtype 字符串是否合法， 放到抽象类中，用子类指定数据库， 后期可以支持mongodb分片集群
         # 🛠todo 子类中没有用到mongodb的数据是通过， QA_data_stock_to_fq  实现数据复权的
-        # 等价执行 例如：type='stock_min' 则执行 DATABASE.stock_min
         # self.mongo_coll = eval('DATABASE.{}'.format(self.type))
-        self.choose_db()
+        # self.choose_db()
 
     # 不能直接实例化这个类
-    @abstractmethod
-    def choose_db(self):
-        pass
 
     def __repr__(self):
         return '< ts_Base_DataStruct >' 

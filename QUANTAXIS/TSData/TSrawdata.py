@@ -1,5 +1,6 @@
 from ts_datastruct import _quotation_base
 import pandas as pd
+import numpy as np
 
 
 
@@ -18,6 +19,7 @@ class TSrawdata(_quotation_base):
         #validate date
         # when column name is date, change column name to datetime
         if 'date' in data.columns:
+            # print('date')
             if data['date'].dtype == np.int64:
                 data['date'] = data['date'].astype(str)
             data['date'] = pd.to_datetime(data['date'])
@@ -28,9 +30,10 @@ class TSrawdata(_quotation_base):
                 )
             if data['date'].isnull().any():
                 raise ValueError('Found NaN in column date.')
-
-            data.rename(columns={'date':'datetime'}, inplace = True)
-            data = data.sort_values('datetime')
+            print('change column name date to datetime')
+            data = data.rename(columns={'date':'datetime'})
+            print('sorting according date')
+            data.sort_values('datetime')
 
         # when column name is datetime
         elif 'datetime' in data.columns:
@@ -45,15 +48,16 @@ class TSrawdata(_quotation_base):
             if data['datetime'].isnull().any():
                 raise ValueError('Found NaN in column datetime.')
 
-            data = data.sort_values('datetime')
+            data.sort_values('datetime')
 
         else:
             raise ValueError('need column name date or datetime, type = datetime')
 
         #validate y
-        if 'y' in df:
-            df['y'] = pd.to_numeric(df['y'])
-            if np.isinf(df['y'].values).any():
+        if 'y' in data.columns:
+            print('find y')
+            data['y'] = pd.to_numeric(data['y'])
+            if np.isinf(data['y'].values).any():
                 raise ValueError('Found infinity in column y.')
         else:
             raise ValueError('need column y as target')
@@ -61,9 +65,11 @@ class TSrawdata(_quotation_base):
 
         #The first two columns will be date(0) and y(1)
         df_date = data['datetime']
-        data.drop(labels=['datetime'], axis=1, inplace=True)
-        df.insert(0, 'datetime', df_date)
+        data = data.drop(labels=['datetime'], axis=1)
+        data.insert(0, 'datetime', df_date)
 
         df_y = data['y']
-        data.drop(labels=['y'], axis=1, inplace=True)
-        df.insert(1, 'y', df_y)
+        data = data.drop(labels=['y'], axis=1)
+        data.insert(1, 'y', df_y)
+        self.data = data
+
