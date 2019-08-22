@@ -3,6 +3,7 @@ import pandas as pd
 import pymongo
 import json
 import datetime
+from QUANTAXIS.QAUtil import QASETTING
 from QUANTAXIS.TSData.TSRawdata import TSRawdata
 
 
@@ -35,15 +36,16 @@ rawdata = TSRawdata(result)
 
 #upload to mongodb
 outcome = rawdata.data
-myclient = pymongo.MongoClient("mongodb://localhost:27017/")
-database = myclient['mydatabase']
+
+client = QASETTING.client
+database = client['mydatabase']
 datacol = database[code+str(datetime.date.today())]
 outcome = date2str(outcome)
-datacol.insert(outcome)
+datacol.insert_many(outcome)
 
 def getrawfrommongodb():
-    myclient = pymongo.MongoClient("mongodb://localhost:27017/")
-    database = myclient['mydatabase']
+    client = QASETTING.client
+    database = client['mydatabase']
     datacol = database[code + str(datetime.date.today())]
     cursor = datacol.find()
     outcome = pd.DataFrame(list(cursor))
