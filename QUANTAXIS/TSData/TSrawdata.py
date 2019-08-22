@@ -1,10 +1,10 @@
-from ts_datastruct import _quotation_base
+from QUANTAXIS.TSData.ts_datastruct import _quotation_base
 import pandas as pd
 import numpy as np
 
 
 
-class TSrawdata(_quotation_base):
+class TSRawdata(_quotation_base):
 
     def __init__(self, data, dtype='rawdata'):
         '''
