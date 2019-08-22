@@ -1,4 +1,4 @@
-from QUANTAXIS.TSData.ts_datastruct import _quotation_base
+from QUANTAXIS.TSData.ts_basedatastruct import _quotation_base
 import pandas as pd
 import numpy as np
 
