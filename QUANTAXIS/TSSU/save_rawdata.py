@@ -14,6 +14,7 @@ from QUANTAXIS.QAUtil import (
     QA_util_to_json_from_pandas,
     trade_date_sse
 )
+from QUANTAXIS.TSUtil import TS_util_datetime_to_strdatetime
 
 def QA_SU_save_stock_day(code=code,start=start, end=end, client=QASETTING.client, ui_log=None, ui_progress=None):
     '''
@@ -48,7 +49,7 @@ def QA_SU_save_stock_day(code=code,start=start, end=end, client=QASETTING.client
 
                 # upload to mongodb
                 outcome = rawdata.data
-                outcome = date2str(outcome)
+                outcome = TS_util_datetime_to_strdatetime(outcome)
                 coll_stock_day.insert_many(outcome)
 
         except Exception as error0:
