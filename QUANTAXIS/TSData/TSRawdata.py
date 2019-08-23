@@ -32,8 +32,6 @@ class TSRawdata(_quotation_base):
                 raise ValueError('Found NaN in column date.')
             print('change column name date to datetime')
             data = data.rename(columns={'date':'datetime'})
-            print('sorting according date')
-            data.sort_values('datetime')
 
         # when column name is datetime
         elif 'datetime' in data.columns:
@@ -48,7 +46,6 @@ class TSRawdata(_quotation_base):
             if data['datetime'].isnull().any():
                 raise ValueError('Found NaN in column datetime.')
 
-            data.sort_values('datetime')
 
         else:
             raise ValueError('need column name date or datetime, type = datetime')
