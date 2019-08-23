@@ -4,7 +4,6 @@ import pymongo
 import json
 import datetime
 from QUANTAXIS.QAUtil import QASETTING
-from QUANTAXIS.TSData.TSRawdata import TSRawdata
 import numpy as np
 from QUANTAXIS.QAUtil import (
     DATABASE,
@@ -14,7 +13,11 @@ from QUANTAXIS.QAUtil import (
     QA_util_to_json_from_pandas,
     trade_date_sse
 )
-from QUANTAXIS.TSUtil import TS_util_datetime_to_strdatetime
+
+from QUANTAXIS.TSUtil.TSDate import TS_util_datetime_to_strdatetime
+from QUANTAXIS.TSFetch.fetchdata import TS_fetch_stock_day_adv
+
+
 
 def QA_SU_save_stock_day(code=code,start=start, end=end, client=QASETTING.client, ui_log=None, ui_progress=None):
     '''

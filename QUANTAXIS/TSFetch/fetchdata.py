@@ -5,10 +5,10 @@ import datetime
 from QUANTAXIS.QAUtil import QASETTING
 from QUANTAXIS.TSData.TSRawdata import TSRawdata
 
-# code = '000002'
-# start = '2007-09-18'
-# end = '2019-08-18'
-def TS_fetch_stock_day_adv(code=code, start=start,end=end)
+code = '000002'
+start = '2007-09-18'
+end = '2019-08-18'
+def TS_fetch_stock_day_adv(code=code, start=start,end=end):
     #get all history data from tdx
     # date = datetime.date.today()
     # data=QA.QAFetch.QATdx.QA_fetch_get_stock_day('00001','2017-01-01','2019-01-31')
