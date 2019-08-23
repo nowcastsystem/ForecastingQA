@@ -27,6 +27,7 @@ import datetime
 import threading
 import time
 import pandas as pd
+import json
 
 from QUANTAXIS.TSUtil.TSLogs import TS_util_log_info
 
@@ -125,7 +126,21 @@ def TS_util_datetime_to_strdatetime(dt):
     )
     return strdatetime
 
+def TS_util_date2str(data):
+    """
+    方便存入mongodb
+    :param data: dataframe including column date or datetime
+    :return: dataframe
+    """
 
+    if 'date' in data.columns:
+        data.date = data.date.apply(str)
+    elif 'datetime' in data.columns:
+        data.datetime = data.datetime.apply(str)
+    else:
+        print('no column named date or datetime')
+
+    return data
 
 
 def TS_util_date_stamp(date):
