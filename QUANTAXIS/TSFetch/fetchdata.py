@@ -12,13 +12,6 @@ def TS_fetch_stock_day_adv(code=code, start=start,end=end):
     #get all history data from tdx
     # date = datetime.date.today()
     # data=QA.QAFetch.QATdx.QA_fetch_get_stock_day('00001','2017-01-01','2019-01-31')
-
-    def date2str(data):
-
-        if 'datetime' in data.columns:
-            data.datetime = data.datetime.apply(str)
-        return json.loads(data.to_json(orient='records'))
-
     #get data from local database
 
     data = QA.QA_fetch_stock_day_adv(code=code, start=start, end=end)

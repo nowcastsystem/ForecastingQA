@@ -14,7 +14,7 @@ from QUANTAXIS.QAUtil import (
     trade_date_sse
 )
 
-from QUANTAXIS.TSUtil.TSDate import TS_util_datetime_to_strdatetime
+from QUANTAXIS.TSUtil.TSDate import TS_util_date2str
 from QUANTAXIS.TSFetch.fetchdata import TS_fetch_stock_day_adv
 
 
@@ -31,6 +31,7 @@ def QA_SU_save_stock_day(code=code,start=start, end=end, client=QASETTING.client
 
     database = client.mydatabase
     coll_stock_day = database[code + str(datetime.date.today())]
+    err = []
 
     def __saving_work(code,coll_stock_day):
         try:
@@ -49,11 +50,15 @@ def QA_SU_save_stock_day(code=code,start=start, end=end, client=QASETTING.client
             else:
                 #get raw data
                 rawdata =TS_fetch_stock_day_adv(code=code, start=start,end=end)
-
+                print('get raw data')
                 # upload to mongodb
                 outcome = rawdata.data
-                outcome = TS_util_datetime_to_strdatetime(outcome)
+                outcome = TS_util_date2str(outcome)
+                outcome = json.loads(outcome.to_json(orient='records'))
+
+                print('insert data')
                 coll_stock_day.insert_many(outcome)
+                print('finish insert')
 
         except Exception as error0:
             print(error0)
