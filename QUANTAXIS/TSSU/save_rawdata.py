@@ -5,53 +5,61 @@ import json
 import datetime
 from QUANTAXIS.QAUtil import QASETTING
 from QUANTAXIS.TSData.TSRawdata import TSRawdata
-
-
 import numpy as np
+from QUANTAXIS.QAUtil import (
+    DATABASE,
+    QA_util_get_next_day,
+    QA_util_get_real_date,
+    QA_util_log_info,
+    QA_util_to_json_from_pandas,
+    trade_date_sse
+)
 
-#get all history data from tdx
-# date = datetime.date.today()
-# data=QA.QAFetch.QATdx.QA_fetch_get_stock_day('00001','2017-01-01','2019-01-31')
+def QA_SU_save_stock_day(code=code,start=start, end=end, client=QASETTING.client, ui_log=None, ui_progress=None):
+    '''
+     save stock_day
+    保存日线数据
+    :param client:
+    :param ui_log:  给GUI qt 界面使用
+    :param ui_progress: 给GUI qt 界面使用
+    :param ui_progress_int_value: 给GUI qt 界面使用
+    '''
 
-def date2str(data):
+    database = client.mydatabase
+    coll_stock_day = database[code + str(datetime.date.today())]
 
-    if 'datetime' in data.columns:
-        data.datetime = data.datetime.apply(str)
-    return json.loads(data.to_json(orient='records'))
+    def __saving_work(code,coll_stock_day):
+        try:
+            QA_util_log_info(
+                '##JOB01 Now Saving STOCK_DAY==== {}'.format(str(code)),
+                ui_log
+            )
 
-#get data from local database
-code = '000002'
-start = '2007-09-18'
-end = '2019-08-18'
-data = QA.QA_fetch_stock_day_adv(code=code, start=start, end=end)
-result = data.data
-result = result.sort_index(ascending=False)
-result = result.reset_index(level=1)
-result = result.drop(columns='code')
-result['date'] = result.index
-result = result.rename(columns={'close': 'y'})
-# print(result)
-rawdata = TSRawdata(result)
-# print(rawdata.data)
+            # 首选查找数据库 是否 有 这个代码的数据
+            ref = coll_stock_day.find()
 
-#upload to mongodb
-outcome = rawdata.data
+            if ref.count() > 0:
 
-client = QASETTING.client
-database = client['mydatabase']
-datacol = database[code+str(datetime.date.today())]
-outcome = date2str(outcome)
-datacol.insert_many(outcome)
+                print(code+'has been already contained ')
+            # 当前数据库中没有这个代码的股票数据
+            else:
+                #get raw data
+                rawdata =TS_fetch_stock_day_adv(code=code, start=start,end=end)
 
-def getrawfrommongodb():
-    client = QASETTING.client
-    database = client['mydatabase']
-    datacol = database[code + str(datetime.date.today())]
-    cursor = datacol.find()
-    outcome = pd.DataFrame(list(cursor))
-    outcome = outcome.drop(columns = '_id')
-    outcome['datetime'] = pd.to_datetime(outcome['datetime'])
-    rawdata = TSRawdata(outcome)
-    return rawdata
-rawdatafrommongo = getrawfrommongodb()
-print(rawdatafrommongo.data)
+                # upload to mongodb
+                outcome = rawdata.data
+                outcome = date2str(outcome)
+                coll_stock_day.insert_many(outcome)
+
+        except Exception as error0:
+            print(error0)
+            err.append(str(code))
+
+
+    __saving_work(code = code, coll_stock_day = coll_stock_day)
+
+    if len(err) < 1:
+        QA_util_log_info('SUCCESS save stock day ^_^', ui_log)
+    else:
+        QA_util_log_info('ERROR CODE \n ', ui_log)
+        QA_util_log_info(err, ui_log)
