@@ -22,13 +22,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """
-QUANTAXIS Log Module
+ForecastingQA Log Module
 @yutiansut
 
-QA_util_log_x is under [QAStandard#0.0.2@602-x] Protocol
-QA_util_log_info()
-QA_util_log_debug()
-QA_util_log_expection()
+TS_util_log_x is under [QAStandard#0.0.2@602-x] Protocol
+TS_util_log_info()
+TS_util_log_debug()
+TS_util_log_expection()
 """
 
 import configparser
@@ -45,7 +45,7 @@ from QUANTAXIS.QAUtil.QASetting import QA_Setting
 """
 try:
     _name = '{}{}quantaxis_{}-{}-.log'.format(
-        QA_Setting().get_config('LOG','path', log_path),
+        QA_Setting().get_config('LOG', 'path', log_path),
         os.sep,
         os.path.basename(sys.argv[0]).split('.py')[0],
         str(datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
@@ -73,7 +73,7 @@ logging.getLogger('').addHandler(console)
 #logging.info('start QUANTAXIS')
 
 
-def QA_util_log_debug(logs, ui_log=None, ui_progress=None):
+def TS_util_log_debug(logs, ui_log=None, ui_progress=None):
     """
     QUANTAXIS Log Module
     @yutiansut
@@ -83,7 +83,7 @@ def QA_util_log_debug(logs, ui_log=None, ui_progress=None):
     logging.debug(logs)
 
 
-def QA_util_log_info(
+def TS_util_log_info(
         logs,
         ui_log=None,
         ui_progress=None,
@@ -109,7 +109,7 @@ def QA_util_log_info(
         ui_progress.emit(ui_progress_int_value)
 
 
-def QA_util_log_expection(logs, ui_log=None, ui_progress=None):
+def TS_util_log_expection(logs, ui_log=None, ui_progress=None):
     """
     QUANTAXIS Log Module
     @yutiansut

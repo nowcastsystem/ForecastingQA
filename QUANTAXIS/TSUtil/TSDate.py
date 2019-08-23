@@ -28,11 +28,11 @@ import threading
 import time
 import pandas as pd
 
-from QUANTAXIS.QAUtil.QALogs import QA_util_log_info
+from QUANTAXIS.TSUtil.TSLogs import TS_util_log_info
 
-QATZInfo_CN = 'Asia/Shanghai'
+TSTZInfo_CN = 'Asia/Shanghai'
 
-def QA_util_time_now():
+def TS_util_time_now():
     """
     返回当前时间
     :return: 类型datetime.datetime
@@ -40,7 +40,7 @@ def QA_util_time_now():
     return datetime.datetime.now()
 
 
-def QA_util_date_today():
+def TS_util_date_today():
     """
     返回当前日期
     :return: 类型datetime.date
@@ -48,16 +48,16 @@ def QA_util_date_today():
     return datetime.date.today()
 
 
-def QA_util_today_str():
+def TS_util_today_str():
     """
     返回今天的日期字符串
     :return: 类型字符串 2011-11-11
     """
-    dt = QA_util_date_today()
-    return QA_util_datetime_to_strdate(dt)
+    dt = TS_util_date_today()
+    return TS_util_datetime_to_strdate(dt)
 
 
-def QA_util_date_str2int(date):
+def TS_util_date_str2int(date):
     """
     日期字符串 '2011-09-11' 变换成 整数 20110911
     日期字符串 '2018-12-01' 变换成 整数 20181201
@@ -71,7 +71,7 @@ def QA_util_date_str2int(date):
         return date
 
 
-def QA_util_date_int2str(int_date):
+def TS_util_date_int2str(int_date):
     """
     类型datetime.datatime
     :param date: int 8位整数
@@ -84,7 +84,9 @@ def QA_util_date_int2str(int_date):
         return date
 
 
-def QA_util_to_datetime(time):
+
+
+def TS_util_to_datetime(time):
     """
     字符串 '2018-01-01'  转变成 datatime 类型
     :param time: 字符串str -- 格式必须是 2018-01-01 ，长度10
@@ -95,11 +97,11 @@ def QA_util_to_datetime(time):
     elif len(str(time)) == 19:
         _time = str(time)
     else:
-        QA_util_log_info('WRONG DATETIME FORMAT {}'.format(time))
+        TS_util_log_info('WRONG DATETIME FORMAT {}'.format(time))
     return datetime.datetime.strptime(_time, '%Y-%m-%d %H:%M:%S')
 
 
-def QA_util_datetime_to_strdate(dt):
+def TS_util_datetime_to_strdate(dt):
     """
     :param dt:  pythone datetime.datetime
     :return:  1999-02-01 string type
@@ -108,7 +110,7 @@ def QA_util_datetime_to_strdate(dt):
     return strdate
 
 
-def QA_util_datetime_to_strdatetime(dt):
+def TS_util_datetime_to_strdatetime(dt):
     """
     :param dt:  pythone datetime.datetime
     :return:  1999-02-01 09:30:91 string type
@@ -124,7 +126,9 @@ def QA_util_datetime_to_strdatetime(dt):
     return strdatetime
 
 
-def QA_util_date_stamp(date):
+
+
+def TS_util_date_stamp(date):
     """
     字符串 '2018-01-01'  转变成 float 类型时间 类似 time.time() 返回的类型
     :param date: 字符串str -- 格式必须是 2018-01-01 ，长度10
@@ -135,7 +139,7 @@ def QA_util_date_stamp(date):
     return date
 
 
-def QA_util_time_stamp(time_):
+def TS_util_time_stamp(time_):
     """
     字符串 '2018-01-01 00:00:00'  转变成 float 类型时间 类似 time.time() 返回的类型
     :param time_: 字符串str -- 数据格式 最好是%Y-%m-%d %H:%M:%S 中间要有空格
@@ -152,7 +156,7 @@ def QA_util_time_stamp(time_):
         return time.mktime(time.strptime(timestr, '%Y-%m-%d %H:%M:%S'))
 
 
-def QA_util_pands_timestamp_to_date(pandsTimestamp):
+def TS_util_pands_timestamp_to_date(pandsTimestamp):
     """
     转换 pandas 的时间戳 到 datetime.date类型
     :param pandsTimestamp: 类型 pandas._libs.tslib.Timestamp
@@ -161,7 +165,7 @@ def QA_util_pands_timestamp_to_date(pandsTimestamp):
     return pandsTimestamp.to_pydatetime().date()
 
 
-def QA_util_pands_timestamp_to_datetime(pandsTimestamp):
+def TS_util_pands_timestamp_to_datetime(pandsTimestamp):
     """
     转换 pandas 的时间戳 到 datetime.datetime类型
     :param pandsTimestamp: 类型 pandas._libs.tslib.Timestamp
@@ -170,7 +174,7 @@ def QA_util_pands_timestamp_to_datetime(pandsTimestamp):
     return pandsTimestamp.to_pydatetime()
 
 
-def QA_util_stamp2datetime(timestamp):
+def TS_util_stamp2datetime(timestamp):
     """
     datestamp转datetime
     pandas转出来的timestamp是13位整数 要/1000
@@ -194,7 +198,7 @@ def QA_util_stamp2datetime(timestamp):
     #
 
 
-def QA_util_ms_stamp(ms):
+def TS_util_ms_stamp(ms):
     """
     直接返回不做处理
     :param ms:  long类型 -- tick count
@@ -203,7 +207,7 @@ def QA_util_ms_stamp(ms):
     return ms
 
 
-def QA_util_date_valid(date):
+def TS_util_date_valid(date):
     """
     判断字符串是否是 1982-05-11 这种格式
     :param date: date 字符串str -- 格式 字符串长度10
@@ -216,14 +220,14 @@ def QA_util_date_valid(date):
         return False
 
 
-def QA_util_realtime(strtime, client):
+def TS_util_realtime(strtime, client):
     """
     查询数据库中的数据
     :param strtime: strtime  str字符串                 -- 1999-12-11 这种格式
-    :param client: client  pymongo.MongoClient类型    -- mongodb 数据库 从 QA_util_sql_mongo_setting 中 QA_util_sql_mongo_setting 获取
+    :param client: client  pymongo.MongoClient类型    -- mongodb 数据库 从 TS_util_sql_mongo_setting 中 TS_util_sql_mongo_setting 获取
     :return: Dictionary  -- {'time_real': 时间,'id': id}
     """
-    time_stamp = QA_util_date_stamp(strtime)
+    time_stamp = TS_util_date_stamp(strtime)
     coll = client.quantaxis.trade_date
     temp_str = coll.find_one({'date_stamp': {"$gte": time_stamp}})
     time_real = temp_str['date']
@@ -231,11 +235,11 @@ def QA_util_realtime(strtime, client):
     return {'time_real': time_real, 'id': time_id}
 
 
-def QA_util_id2date(idx, client):
+def TS_util_id2date(idx, client):
     """
     从数据库中查询 通达信时间
     :param idx: 字符串 -- 数据库index
-    :param client: pymongo.MongoClient类型    -- mongodb 数据库 从 QA_util_sql_mongo_setting 中 QA_util_sql_mongo_setting 获取
+    :param client: pymongo.MongoClient类型    -- mongodb 数据库 从 TS_util_sql_mongo_setting 中 TS_util_sql_mongo_setting 获取
     :return:         Str -- 通达信数据库时间
     """
     coll = client.quantaxis.trade_date
@@ -243,13 +247,13 @@ def QA_util_id2date(idx, client):
     return temp_str['date']
 
 
-def QA_util_is_trade(date, code, client):
+def TS_util_is_trade(date, code, client):
     """
     判断是否是交易日
     从数据库中查询
     :param date: str类型 -- 1999-12-11 这种格式    10位字符串
     :param code: str类型 -- 股票代码 例如 603658 ， 6位字符串
-    :param client: pymongo.MongoClient类型    -- mongodb 数据库 从 QA_util_sql_mongo_setting 中 QA_util_sql_mongo_setting 获取
+    :param client: pymongo.MongoClient类型    -- mongodb 数据库 从 TS_util_sql_mongo_setting 中 TS_util_sql_mongo_setting 获取
     :return:  Boolean -- 是否是交易时间
     """
     coll = client.quantaxis.stock_day
@@ -262,7 +266,7 @@ def QA_util_is_trade(date, code, client):
         return False
 
 
-def QA_util_get_date_index(date, trade_list):
+def TS_util_get_date_index(date, trade_list):
     """
     返回在trade_list中的index位置
     :param date: str类型 -- 1999-12-11 这种格式    10位字符串
@@ -272,7 +276,7 @@ def QA_util_get_date_index(date, trade_list):
     return trade_list.index(date)
 
 
-def QA_util_get_index_date(id, trade_list):
+def TS_util_get_index_date(id, trade_list):
     """
     :param id:  ：？？
     :param trade_list:  ？？
@@ -281,7 +285,7 @@ def QA_util_get_index_date(id, trade_list):
     return trade_list[id]
 
 
-def QA_util_select_hours(time=None, gt=None, lt=None, gte=None, lte=None):
+def TS_util_select_hours(time=None, gt=None, lt=None, gte=None, lte=None):
     'quantaxis的时间选择函数,约定时间的范围,比如早上9点到11点'
     if time is None:
         __realtime = datetime.datetime.now()
@@ -331,7 +335,7 @@ def QA_util_select_hours(time=None, gt=None, lt=None, gte=None, lte=None):
         return True
 
 
-def QA_util_select_min(time=None, gt=None, lt=None, gte=None, lte=None):
+def TS_util_select_min(time=None, gt=None, lt=None, gte=None, lte=None):
     """
     'quantaxis的时间选择函数,约定时间的范围,比如30分到59分'
     :param time:
@@ -388,7 +392,7 @@ def QA_util_select_min(time=None, gt=None, lt=None, gte=None, lte=None):
         return True
 
 
-def QA_util_time_delay(time_=0):
+def TS_util_time_delay(time_=0):
     """
     '这是一个用于复用/比如说@装饰器的延时函数\
     使用threading里面的延时,为了是不阻塞进程\
@@ -404,7 +408,7 @@ def QA_util_time_delay(time_=0):
     return _exec
 
 
-def QA_util_calc_time(func, *args, **kwargs):
+def TS_util_calc_time(func, *args, **kwargs):
     """
     '耗时长度的装饰器'
     :param func:
@@ -418,6 +422,7 @@ def QA_util_calc_time(func, *args, **kwargs):
     # return datetime.datetime.now() - _time
 
 
+
 month_data = pd.date_range(
     '1/1/1996',
     '12/31/2023',
@@ -425,4 +430,4 @@ month_data = pd.date_range(
 ).astype(str).tolist()
 
 if __name__ == '__main__':
-    print(QA_util_time_stamp('2017-01-01 10:25:08'))
+    print(TS_util_time_stamp('2017-01-01 10:25:08'))
