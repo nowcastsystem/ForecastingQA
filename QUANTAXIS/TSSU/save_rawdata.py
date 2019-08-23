@@ -19,7 +19,7 @@ from QUANTAXIS.TSFetch.fetchdata import TS_fetch_stock_day_adv
 
 
 
-def QA_SU_save_stock_day(code=code,start=start, end=end, client=QASETTING.client, ui_log=None, ui_progress=None):
+def TS_SU_save_stock_day(code=None,start=None, end=None, client=QASETTING.client, ui_log=None, ui_progress=None):
     '''
      save stock_day
     保存日线数据
