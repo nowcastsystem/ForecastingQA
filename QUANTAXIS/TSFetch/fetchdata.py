@@ -36,7 +36,7 @@ def TS_fetch_stock_day_adv(code, start,end):
 def getrawfrommongodb():
     client = QASETTING.client
     database = client['mydatabase']
-    datacol = database[code + str(datetime.date.today())]
+    datacol = database['rawdatatest']
     cursor = datacol.find()
     outcome = pd.DataFrame(list(cursor))
     outcome = outcome.drop(columns = '_id')

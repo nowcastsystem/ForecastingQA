@@ -4,11 +4,12 @@ import pandas as pd
 import xgboost as xgb
 import os
 import pickle
+from QUANTAXIS.TSFetch.fetchdata import getrawfrommongodb
 
 from QUANTAXIS.TSSU import save_rawdata
 
 config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-config.read('./QUANTAXIS/TSBoosting/config.ini')
+config.read('.//QUANTAXIS//TSBoosting//config.ini')
 
 '''
 get arguments from cli, run:
@@ -32,18 +33,19 @@ config.read(result.config_file)
 
 
 
-def readdata(path):
-    '''This function reads in a data frame with index 'dtindex' from a specified path.
-        Args:
-            path: a path that specifies the location of the data.
-        Returns:
-            A data frame indexed with standard datetime index. The column name of that index must be dtindex.
-    '''
+# def readdata(path):
+#     '''This function reads in a data frame with index 'dtindex' from a specified path.
+#         Args:
+#             path: a path that specifies the location of the data.
+#         Returns:
+#             A data frame indexed with standard datetime index. The column name of that index must be dtindex.
+#     '''
+#
+#     data = pd.read_csv(path)
+#     data.index = data['dtindex']
+#
+#     return data.drop(columns='dtindex')
 
-    data = pd.read_csv(path)
-    data.index = data['dtindex']
-
-    return data.drop(columns='dtindex')
 
 
 def fillinmissing(data, dtindex, fillin=None, indicator=False):
@@ -147,31 +149,33 @@ dtindex = pd.date_range(start=config['dtindex']['startdt'],
                         freq=config['dtindex']['by'])
 
 
-outcome = readdata(config['outcomepath']['path'])
+rawdata = getrawfrommongodb()
+outcome = rawdata.data
+outcome.set_index('datetime', inplace=True)
 outcome, isencoded = fillinmissing(data=outcome,
                                  dtindex=dtindex,
                                  fillin=0,
                                  indicator=True)
 
-predictors = pd.DataFrame(index=dtindex)
-
-
-for i in config['predictorspath']:
-    predictor = readdata(config['predictorspath'][i])
-
-    predictor = fillinmissing(data=predictor,
-                                       dtindex=dtindex,
-                                       fillin=None)
-    predictors = predictors.join(predictor)
+# predictors = pd.DataFrame(index=dtindex)
+#
+#
+# for i in config['predictorspath']:
+#     predictor = readdata(config['predictorspath'][i])
+#
+#     predictor = fillinmissing(data=predictor,
+#                                        dtindex=dtindex,
+#                                        fillin=None)
+#     predictors = predictors.join(predictor)
 
 
 outcomelag = get_lag(data=outcome, lags=range(2, 3), unit='D')
 outcomelagmean = get_lag_mean(data=outcome, lags=range(14, 60), unit='D', meanby='D')
 
-predictorslag = get_lag(data=predictors, lags=range(1, 10), unit='D')
-predictorslagmean = get_lag_mean(data=predictors, lags=range(1, 10), unit='D', meanby='D')
-
-predictorslaglagbyh = get_lag(data=predictors, lags=range(1, 5), unit='H')
+# predictorslag = get_lag(data=predictors, lags=range(1, 10), unit='D')
+# predictorslagmean = get_lag_mean(data=predictors, lags=range(1, 10), unit='D', meanby='D')
+#
+# predictorslaglagbyh = get_lag(data=predictors, lags=range(1, 5), unit='H')
 
 datetimefeature = gettimefeature(dtindex)
 
@@ -183,9 +187,9 @@ fulldf = pd.concat(fulllist, axis=1).dropna()
 
 
 
-xgbinpt = XGBInput(label=fulldf['Traffic'],
-                   covariate=fulldf.drop(columns='Traffic'),
-                   splitdt='2018-09-01 00:00:00')
+
+xgbinpt = XGBInput(label=fulldf['y'], covariate=fulldf.drop(columns='y'), splitdt='2018-09-01 00:00:00')
+
 
 param = {
     'max_depth': 2,
@@ -210,4 +214,3 @@ os.makedirs(os.path.dirname(filename), exist_ok=True)
 with open(filename, "wb") as f:
     pickle.dump(xgbmod, f)
 
-save_rawdata.
