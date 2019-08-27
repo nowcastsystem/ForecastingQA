@@ -4,12 +4,17 @@ import pandas as pd
 import xgboost as xgb
 import os
 import pickle
-from QUANTAXIS.TSFetch.fetchdata import getrawfrommongodb
 
+
+from QUANTAXIS.QAUtil import QASETTING
+
+from QUANTAXIS.TSFetch.fetchdata import getrawfrommongodb
+from QUANTAXIS.TSSU.save_prediction import TS_SU_save_prediction
 from QUANTAXIS.TSSU import save_rawdata
 
+
 config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-config.read('.//QUANTAXIS//TSBoosting//config.ini')
+config.read('./QUANTAXIS/TSBoosting/config.ini')
 
 '''
 get arguments from cli, run:
@@ -138,12 +143,6 @@ class XGBInput(object):
 
 
 
-
-
-
-
-
-
 dtindex = pd.date_range(start=config['dtindex']['startdt'],
                         end=config['dtindex']['enddt'],
                         freq=config['dtindex']['by'])
@@ -201,16 +200,26 @@ param = {
 }
 
 
-numround =3000
+numround =300
 early_stopping_rounds = 10
 # from pandas.plotting import register_matplotlib_converters
 # register_matplotlib_converters()
 
 xgbmod = xgb.train(param, xgbinpt.dtrain, numround, xgbinpt.evallist, early_stopping_rounds=10)
 
-filename = config['modelpath']['path']+'Store' + str(12) + '.model'
-os.makedirs(os.path.dirname(filename), exist_ok=True)
+# filename = config['modelpath']['path']+'Store' + str(12) + '.model'
+# os.makedirs(os.path.dirname(filename), exist_ok=True)
 
-with open(filename, "wb") as f:
-    pickle.dump(xgbmod, f)
+# with open(filename, "wb") as f:
+#     pickle.dump(xgbmod, f)
+
+
+prediction =pd.DataFrame(xgbinpt.labeltrain)
+prediction2 = pd.DataFrame(xgbmod.predict(xgbinpt.dtrain), index = prediction.index)
+prediction = prediction.join(prediction2)
+
+prediction.rename(columns = {'0':'prediction'})
+
+
+TS_SU_save_prediction(name='prediction', prediction =prediction, client=QASETTING.client, ui_log=None)
 

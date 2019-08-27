@@ -24,20 +24,20 @@ def TS_SU_save_prediction(name='prediction', prediction = None, client=QASETTING
     '''
 
     database = client.mydatabase
-    coll_prediction = database['prediction']
+    coll_prediction = database[name]
     err = []
 
     def __saving_work(coll_prediction, prediction):
         try:
             QA_util_log_info(
-                '##JOB01 Now Saving prediction==== {}'.format(),
+                '##JOB01 Now Saving prediction==== {}'.format('123'),
                 ui_log
             )
 
             prediction = json.loads(prediction.to_json(orient='records'))
 
             print('insert data')
-            prediction.insert_many(prediction)
+            coll_prediction.insert_many(prediction)
             print('finish insert')
 
         except Exception as error0:
