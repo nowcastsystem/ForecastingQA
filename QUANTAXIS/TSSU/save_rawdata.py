@@ -19,14 +19,12 @@ from QUANTAXIS.TSFetch.fetchdata import TS_fetch_stock_day_adv
 
 
 
-def TS_SU_save_stock_day(code=None,start=None, end=None, client=QASETTING.client, ui_log=None, ui_progress=None):
+def TS_SU_save_stock_day(code=None,start=None, end=None, client=QASETTING.client, ui_log=None):
     '''
      save stock_day
     保存日线数据
     :param client:
     :param ui_log:  给GUI qt 界面使用
-    :param ui_progress: 给GUI qt 界面使用
-    :param ui_progress_int_value: 给GUI qt 界面使用
     '''
 
     database = client.mydatabase
@@ -69,6 +67,45 @@ def TS_SU_save_stock_day(code=None,start=None, end=None, client=QASETTING.client
 
     if len(err) < 1:
         QA_util_log_info('SUCCESS save stock day ^_^', ui_log)
+    else:
+        QA_util_log_info('ERROR CODE \n ', ui_log)
+        QA_util_log_info(err, ui_log)
+
+
+def TS_SU_save_prediction(name='prediction', prediction = None, client=QASETTING.client, ui_log=None):
+    '''
+     save forecasting results. A dataframe with there columns. The datetime index, the target y, and the prediction.
+    保存日线数据
+    :param client:
+    :param ui_log:  给GUI qt 界面使用
+    '''
+
+    database = client.mydatabase
+    coll_prediction = database['prediction']
+    err = []
+
+    def __saving_work(coll_prediction, prediction):
+        try:
+            QA_util_log_info(
+                '##JOB01 Now Saving prediction==== {}'.format(),
+                ui_log
+            )
+
+            prediction = json.loads(prediction.to_json(orient='records'))
+
+            print('insert data')
+            prediction.insert_many(prediction)
+            print('finish insert')
+
+        except Exception as error0:
+            print(error0)
+            err.append(str(prediction))
+
+
+    __saving_work(coll_prediction = coll_prediction, prediction = prediction)
+
+    if len(err) < 1:
+        QA_util_log_info('SUCCESS save prediction ^_^', ui_log)
     else:
         QA_util_log_info('ERROR CODE \n ', ui_log)
         QA_util_log_info(err, ui_log)

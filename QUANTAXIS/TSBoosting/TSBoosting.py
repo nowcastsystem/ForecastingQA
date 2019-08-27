@@ -6,6 +6,8 @@ import os
 import pickle
 from QUANTAXIS.TSFetch.fetchdata import getrawfrommongodb
 
+from QUANTAXIS.TSSU import save_rawdata
+
 config = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
 config.read('.//QUANTAXIS//TSBoosting//config.ini')
 
@@ -45,6 +47,7 @@ config.read(result.config_file)
 #     return data.drop(columns='dtindex')
 
 
+
 def fillinmissing(data, dtindex, fillin=None, indicator=False):
     '''This function takes a data frame that is indexed by standard datetime index.
     It completes the data frame by encoding values to missing records.
@@ -66,7 +69,7 @@ def fillinmissing(data, dtindex, fillin=None, indicator=False):
 
     return fulldata
 
-import pandas as pd
+
 
 def get_lag(data, lags, unit):
     lagdata_output = pd.DataFrame(index=data.index)
@@ -184,7 +187,9 @@ fulldf = pd.concat(fulllist, axis=1).dropna()
 
 
 
+
 xgbinpt = XGBInput(label=fulldf['y'], covariate=fulldf.drop(columns='y'), splitdt='2018-09-01 00:00:00')
+
 
 param = {
     'max_depth': 2,
@@ -196,7 +201,7 @@ param = {
 }
 
 
-numround = 100
+numround =3000
 early_stopping_rounds = 10
 # from pandas.plotting import register_matplotlib_converters
 # register_matplotlib_converters()
@@ -208,3 +213,4 @@ os.makedirs(os.path.dirname(filename), exist_ok=True)
 
 with open(filename, "wb") as f:
     pickle.dump(xgbmod, f)
+
