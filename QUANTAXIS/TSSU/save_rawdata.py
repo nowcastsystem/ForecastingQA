@@ -30,7 +30,7 @@ def TS_SU_save_stock_day(code=None,start=None, end=None, client=QASETTING.client
     '''
 
     database = client.mydatabase
-    coll_stock_day = database[code + str(datetime.date.today())]
+    coll_stock_day = database['rawdatatest']
     err = []
 
     def __saving_work(code,coll_stock_day):
