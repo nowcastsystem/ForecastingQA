@@ -142,84 +142,86 @@ class XGBInput(object):
 
 
 
-
-dtindex = pd.date_range(start=config['dtindex']['startdt'],
-                        end=config['dtindex']['enddt'],
-                        freq=config['dtindex']['by'])
-
-
-rawdata = getrawfrommongodb()
-outcome = rawdata.data
-outcome.set_index('datetime', inplace=True)
-outcome, isencoded = fillinmissing(data=outcome,
-                                 dtindex=dtindex,
-                                 fillin=0,
-                                 indicator=True)
-
-# predictors = pd.DataFrame(index=dtindex)
-#
-#
-# for i in config['predictorspath']:
-#     predictor = readdata(config['predictorspath'][i])
-#
-#     predictor = fillinmissing(data=predictor,
-#                                        dtindex=dtindex,
-#                                        fillin=None)
-#     predictors = predictors.join(predictor)
+def TS_Boosting_predict(start,end,by,databaseid,collectionid):
+    print('test')
+    dtindex = pd.date_range(start=start,
+                            end=end,
+                            freq=by)
 
 
-outcomelag = get_lag(data=outcome, lags=range(2, 3), unit='D')
-outcomelagmean = get_lag_mean(data=outcome, lags=range(14, 60), unit='D', meanby='D')
+    rawdata = getrawfrommongodb(start=start, end=end,
+                                databaseid=databaseid, collectionid=collectionid)
+    outcome = rawdata.data
+    outcome.set_index('datetime', inplace=True)
+    outcome, isencoded = fillinmissing(data=outcome,
+                                     dtindex=dtindex,
+                                     fillin=0,
+                                     indicator=True)
 
-# predictorslag = get_lag(data=predictors, lags=range(1, 10), unit='D')
-# predictorslagmean = get_lag_mean(data=predictors, lags=range(1, 10), unit='D', meanby='D')
-#
-# predictorslaglagbyh = get_lag(data=predictors, lags=range(1, 5), unit='H')
-
-datetimefeature = gettimefeature(dtindex)
-
-#featurelist = [outcomelag, outcomelagmean, predictorslag, predictorslagmean, datetimefeature]
-#fullfeature = pd.concat(featurelist, axis=1)
-
-fulllist = [outcome, outcomelag]
-fulldf = pd.concat(fulllist, axis=1).dropna()
-
-
-
-
-xgbinpt = XGBInput(label=fulldf['y'], covariate=fulldf.drop(columns='y'), splitdt='2018-09-01 00:00:00')
-
-
-param = {
-    'max_depth': 2,
-    'eta': .05,
-    'silent': 1,
-    'objective': 'reg:squarederror',
-    'nthread': 5,
-    'eval_metric': 'rmse'
-}
+    # predictors = pd.DataFrame(index=dtindex)
+    #
+    #
+    # for i in config['predictorspath']:
+    #     predictor = readdata(config['predictorspath'][i])
+    #
+    #     predictor = fillinmissing(data=predictor,
+    #                                        dtindex=dtindex,
+    #                                        fillin=None)
+    #     predictors = predictors.join(predictor)
 
 
-numround =300
-early_stopping_rounds = 10
-# from pandas.plotting import register_matplotlib_converters
-# register_matplotlib_converters()
+    outcomelag = get_lag(data=outcome, lags=range(2, 3), unit='D')
+    outcomelagmean = get_lag_mean(data=outcome, lags=range(14, 60), unit='D', meanby='D')
 
-xgbmod = xgb.train(param, xgbinpt.dtrain, numround, xgbinpt.evallist, early_stopping_rounds=10)
+    # predictorslag = get_lag(data=predictors, lags=range(1, 10), unit='D')
+    # predictorslagmean = get_lag_mean(data=predictors, lags=range(1, 10), unit='D', meanby='D')
+    #
+    # predictorslaglagbyh = get_lag(data=predictors, lags=range(1, 5), unit='H')
 
-# filename = config['modelpath']['path']+'Store' + str(12) + '.model'
-# os.makedirs(os.path.dirname(filename), exist_ok=True)
+    datetimefeature = gettimefeature(dtindex)
 
-# with open(filename, "wb") as f:
-#     pickle.dump(xgbmod, f)
+    #featurelist = [outcomelag, outcomelagmean, predictorslag, predictorslagmean, datetimefeature]
+    #fullfeature = pd.concat(featurelist, axis=1)
 
-
-prediction =pd.DataFrame(xgbinpt.labeltrain)
-prediction2 = pd.DataFrame(xgbmod.predict(xgbinpt.dtrain), index = prediction.index)
-prediction = prediction.join(prediction2)
-
-prediction.rename(columns = {'0':'prediction'})
+    fulllist = [outcome, outcomelag]
+    fulldf = pd.concat(fulllist, axis=1).dropna()
 
 
-TS_SU_save_prediction(name='prediction', prediction =prediction, client=QASETTING.client, ui_log=None)
+
+
+    xgbinpt = XGBInput(label=fulldf['y'], covariate=fulldf.drop(columns='y'), splitdt='2018-09-01 00:00:00')
+
+
+    param = {
+        'max_depth': 2,
+        'eta': .05,
+        'silent': 1,
+        'objective': 'reg:squarederror',
+        'nthread': 5,
+        'eval_metric': 'rmse'
+    }
+
+
+    numround =300
+    early_stopping_rounds = 10
+    # from pandas.plotting import register_matplotlib_converters
+    # register_matplotlib_converters()
+
+    xgbmod = xgb.train(param, xgbinpt.dtrain, numround, xgbinpt.evallist, early_stopping_rounds=10)
+
+    # filename = config['modelpath']['path']+'Store' + str(12) + '.model'
+    # os.makedirs(os.path.dirname(filename), exist_ok=True)
+
+    # with open(filename, "wb") as f:
+    #     pickle.dump(xgbmod, f)
+
+
+    prediction =pd.DataFrame(xgbinpt.labeltrain)
+    prediction2 = pd.DataFrame(xgbmod.predict(xgbinpt.dtrain), index = prediction.index)
+    prediction = prediction.join(prediction2)
+
+    prediction.rename(columns = {'0':'prediction'})
+
+
+    TS_SU_save_prediction(name='prediction', prediction =prediction, client=QASETTING.client, ui_log=None)
 
