@@ -6,7 +6,7 @@ from QUANTAXIS.QAUtil import QASETTING
 from QUANTAXIS.TSData.TSRawdata import TSRawdata
 
 
-def TS_fetch_stock_day_adv(code, start,end):
+def TS_fetch_stock_day_adv(code, start, end):
     #get all history data from tdx
     # date = datetime.date.today()
     # data=QA.QAFetch.QATdx.QA_fetch_get_stock_day('00001','2017-01-01','2019-01-31')
@@ -33,10 +33,11 @@ def TS_fetch_stock_day_adv(code, start,end):
 # outcome = date2str(outcome)
 # datacol.insert_many(outcome)
 
-def getrawfrommongodb():
-    client = QASETTING.client
-    database = client['mydatabase']
-    datacol = database['rawdatatest']
+def getrawfrommongodb(client = QASETTING.client,
+                      databaseid = 'mydatabase',
+                      collectionid = 'rawdatatest'):
+    database = client[databaseid]
+    datacol = database[collectionid]
     cursor = datacol.find()
     outcome = pd.DataFrame(list(cursor))
     outcome = outcome.drop(columns = '_id')
