@@ -33,7 +33,7 @@ def TS_fetch_stock_day_adv(code, start, end):
 # outcome = date2str(outcome)
 # datacol.insert_many(outcome)
 
-def getrawfrommongodb(client = QASETTING.client,
+def getrawfrommongodb(start,end,client = QASETTING.client,
                       databaseid = 'mydatabase',
                       collectionid = 'rawdatatest'):
     database = client[databaseid]
@@ -42,6 +42,10 @@ def getrawfrommongodb(client = QASETTING.client,
     outcome = pd.DataFrame(list(cursor))
     outcome = outcome.drop(columns = '_id')
     outcome['datetime'] = pd.to_datetime(outcome['datetime'])
+    outcome.set_index('datetime', inplace=True)
+    #inplace=True
+    outcome = outcome[start:end]
+    outcome['datetime'] = outcome.index
     rawdata = TSRawdata(outcome)
     return rawdata
 # rawdatafrommongo = getrawfrommongodb()
