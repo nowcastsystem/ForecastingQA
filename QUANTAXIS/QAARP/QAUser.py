@@ -31,7 +31,7 @@ from QUANTAXIS.QAUtil.QARandom import QA_util_random_with_topic
 from QUANTAXIS.QAUtil.QASetting import QA_Setting, DATABASE
 from QUANTAXIS.QAUtil.QADate_trade import QA_util_get_next_day, QA_util_get_real_date
 from QUANTAXIS.QAUtil.QAParameter import MARKET_TYPE, FREQUENCE
-from QUANTAXIS.TSUser.TSUser import Super_User
+from QUANTAXIS.TSUser.Super_User import Super_User
 
 class QA_User(Super_User):
     pass
