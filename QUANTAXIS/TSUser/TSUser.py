@@ -22,6 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 from QUANTAXIS.TSUser.Super_User import Super_User
+from QUANTAXIS.QAUtil import QASETTING
 import pymongo
 import datetime
 
@@ -41,8 +42,7 @@ class TS_User(Super_User):
             **kwargs):
         self.data_list = []
         self.prediction_list = []
-        self.myclient = pymongo.MongoClient('mongodb://127.0.0.1:27017/')
-        database = self.myclient.mydatabase
+        database = QASETTING.client.mydatabase
         self.client = database['userinfo']
         super().__init__(
             user_cookie,
@@ -62,7 +62,7 @@ class TS_User(Super_User):
     def add_data_predict(self):
         dlist = []
         plist = []
-        database = self.myclient[self.username]
+        database = QASETTING.client[self.username]
         col_list = database.list_collection_names()
 
         dlist.append(i for i in col_list if "data" in i)
