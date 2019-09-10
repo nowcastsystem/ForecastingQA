@@ -475,6 +475,7 @@ class Super_User():
             'subscribed_code': self.subscribed_code,
             'portfolio_list': self.portfolio_list,
             'lastupdatetime': str(datetime.datetime.now())
+
         }
 
     def save(self):
