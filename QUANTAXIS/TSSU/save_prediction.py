@@ -37,6 +37,9 @@ def TS_SU_save_prediction(name='prediction', prediction = None, client=QASETTING
             prediction = json.loads(prediction.to_json(orient='records'))
 
             print('insert data')
+            print('remove old prediction')
+            coll_prediction.drop()
+            print('save new prediction')
             coll_prediction.insert_many(prediction)
             print('finish insert')
 

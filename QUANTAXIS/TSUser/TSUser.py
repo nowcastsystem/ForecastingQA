@@ -22,7 +22,90 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 from QUANTAXIS.TSUser.Super_User import Super_User
+import pymongo
+import datetime
 
 class TS_User(Super_User):
-    pass
+    def __init__(self,
+            user_cookie=None,
+            username='defalut',
+            phone='defalut',
+            level='l1',
+            utype='guests',
+            password='default',
+            coins=10000,
+            wechat_id=None,
+            money=0,
+            *args,
+            **kwargs):
+        self.data_list = []
+        self.prediction_list = []
+        self.myclient = pymongo.MongoClient('mongodb://127.0.0.1:27017/')
+        database = self.myclient.mydatabase
+        self.client = database['userinfo']
+        super().__init__(self,
+            user_cookie,
+            username,
+            phone,
+            level,
+            utype,
+            password,
+            coins,
+            wechat_id,
+            money,
+            *args,
+            **kwargs)
+        self.data_list = []
+        self.prediction_list = []
+        self.myclient = pymongo.MongoClient('mongodb://127.0.0.1:27017/')
+        database = self.myclient.mydatabase
+        self.client = database['userinfo']
+
+
+
+    def add_data_predict(self):
+        dlist = []
+        plist = []
+        database = self.myclient[self.username]
+        col_list = database.list_collection_names()
+
+        dlist.append(i for i in col_list if "data" in i)
+        plist.append(i for i in col_list if "pred" in i)
+        num = 0
+        for i in dlist:
+            num = num + 1
+            self.data_list.append({i:num})
+            self.data_list = sorted(set(self.data_list), key=self.data_list.index)
+        num = 0
+        for i in plist:
+            num = num + 1
+            self.prediction_list.append({i:num})
+            self.prediction_list = sorted(set(self.prediction_list), key=self.prediction_list.index)
+
+
+
+    @property
+    def message(self):
+        return {
+            'user_cookie': self.user_cookie,
+            'username': self.username,
+            'password': self.password,
+            'wechat_id': self.wechat_id,
+            'phone': self.phone,
+            'level': self.level,
+            'utype': self.utype,
+            'coins': self.coins,
+            'coins_history': self.coins_history,
+            'money': self.money,
+            'subuscribed_strategy': self._subscribed_strategy,
+            'subscribed_code': self.subscribed_code,
+            'portfolio_list': self.portfolio_list,
+            'lastupdatetime': str(datetime.datetime.now()),
+            'data_list': self.data_list,
+            'prediction_list': self.prediction_list
+
+        }
+
+
+
 

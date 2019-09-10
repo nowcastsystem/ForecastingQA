@@ -42,8 +42,20 @@ def TS_SU_save_stock_day(code=None,start=None, end=None, client=QASETTING.client
             ref = coll_stock_day.find()
 
             if ref.count() > 0:
+                print(code + 'has been already contained ')
+                print('now start update')
+                start_date = ref[ref.count() - 1]['datetime']
+                rawdata = TS_fetch_stock_day_adv(code=code, start=start_date, end=end)
+                print('get raw data')
+                # upload to mongodb
+                outcome = rawdata.data
+                outcome = TS_util_date2str(outcome)
+                outcome = json.loads(outcome.to_json(orient='records'))
 
-                print(code+'has been already contained ')
+                print('update data')
+                coll_stock_day.insert_many(outcome)
+                print('finish update')
+
             # 当前数据库中没有这个代码的股票数据
             else:
                 #get raw data
