@@ -26,6 +26,7 @@ import pymongo
 import datetime
 
 class TS_User(Super_User):
+    # pass
     def __init__(self,
             user_cookie=None,
             username='defalut',
@@ -43,7 +44,7 @@ class TS_User(Super_User):
         self.myclient = pymongo.MongoClient('mongodb://127.0.0.1:27017/')
         database = self.myclient.mydatabase
         self.client = database['userinfo']
-        super().__init__(self,
+        super().__init__(
             user_cookie,
             username,
             phone,
@@ -55,11 +56,6 @@ class TS_User(Super_User):
             money,
             *args,
             **kwargs)
-        self.data_list = []
-        self.prediction_list = []
-        self.myclient = pymongo.MongoClient('mongodb://127.0.0.1:27017/')
-        database = self.myclient.mydatabase
-        self.client = database['userinfo']
 
 
 
@@ -107,5 +103,13 @@ class TS_User(Super_User):
         }
 
 
+if __name__ == '__main__':
 
+    # 测试不对
+    user = TS_User(user_cookie='user_admin')
+    folio = user.new_portfolio('folio_admin')
+    ac1 = user.get_portfolio(folio).new_account('account_admin')
 
+    print(user)
+    print(user.get_portfolio(folio))
+    print(user.get_portfolio(folio).get_account(ac1))
