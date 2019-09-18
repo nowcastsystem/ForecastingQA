@@ -31,7 +31,8 @@ class TSRawdata(_quotation_base):
             if data['date'].isnull().any():
                 raise ValueError('Found NaN in column date.')
             print('change column name date to datetime')
-            data = data.rename(columns={'date':'datetime'})
+            data['datetime'] = data['date']
+            data = data.drop(columns = 'date')
 
         # when column name is datetime
         elif 'datetime' in data.columns:
