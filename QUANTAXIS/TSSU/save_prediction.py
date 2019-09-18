@@ -13,6 +13,7 @@ from QUANTAXIS.QAUtil import (
     QA_util_to_json_from_pandas,
     trade_date_sse
 )
+from QUANTAXIS.TSUtil.TSDate import TS_util_date2str
 
 
 def TS_SU_save_prediction(name='prediction', prediction = None, client=QASETTING.client, ui_log=None):
@@ -33,7 +34,7 @@ def TS_SU_save_prediction(name='prediction', prediction = None, client=QASETTING
                 '##JOB01 Now Saving prediction==== {}'.format('123'),
                 ui_log
             )
-
+            prediction = TS_util_date2str(prediction)
             prediction = json.loads(prediction.to_json(orient='records'))
 
             print('insert data')

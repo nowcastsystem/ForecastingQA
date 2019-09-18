@@ -123,6 +123,7 @@ class XGBInput(object):
 
         self.labeltest = self.label.loc[self.label.index > splitdt].copy()
         self.covariatetest = self.covariate.loc[self.covariate.index > splitdt].copy()
+        self.ddata = xgb.DMatrix(self.covariate, label=self.label)
 
         self.dtrain = xgb.DMatrix(self.covariatetrain, label=self.labeltrain)
         self.trainindex = self.covariatetrain.index
@@ -170,7 +171,7 @@ def TS_Boosting_predict(start,end,by,databaseid,collectionid):
     #     predictors = predictors.join(predictor)
 
 
-    outcomelag = get_lag(data=outcome, lags=range(2, 3), unit='D')
+    outcomelag = get_lag(data=outcome, lags=range(2, 30), unit='D')
     outcomelagmean = get_lag_mean(data=outcome, lags=range(14, 60), unit='D', meanby='D')
 
     # predictorslag = get_lag(data=predictors, lags=range(1, 10), unit='D')
@@ -186,10 +187,9 @@ def TS_Boosting_predict(start,end,by,databaseid,collectionid):
     fulllist = [outcome, outcomelag]
     fulldf = pd.concat(fulllist, axis=1).dropna()
 
-
-
-
-    xgbinpt = XGBInput(label=fulldf['y'], covariate=fulldf.drop(columns='y'), splitdt='2018-09-01 00:00:00')
+    splitpoint = int(0.8 * len(dtindex))
+    splitdt = str(dtindex[splitpoint])
+    xgbinpt = XGBInput(label=fulldf['y'], covariate=fulldf.drop(columns='y'), splitdt=splitdt)
 
 
     param = {
@@ -216,11 +216,16 @@ def TS_Boosting_predict(start,end,by,databaseid,collectionid):
     #     pickle.dump(xgbmod, f)
 
 
-    prediction =pd.DataFrame(xgbinpt.labeltrain)
-    prediction2 = pd.DataFrame(xgbmod.predict(xgbinpt.dtrain), index = prediction.index)
+    prediction =pd.DataFrame(xgbinpt.label)
+    # print(prediction)
+    prediction2 = pd.DataFrame(xgbmod.predict(xgbinpt.ddata), index = prediction.index)
+    prediction2.columns = ['predict']
+    # print(prediction2)
     prediction = prediction.join(prediction2)
+    # print(prediction)
+    # print(dtindex)
+    prediction['datetime'] = fulldf.index
 
-    prediction.rename(columns = {'0':'prediction'})
 
 
     TS_SU_save_prediction(name='prediction', prediction =prediction, client=QASETTING.client, ui_log=None)
