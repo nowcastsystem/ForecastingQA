@@ -76,14 +76,16 @@ def fillinmissing(data, dtindex, fillin=None, indicator=False):
 
 
 
-def get_lag(data, lags, unit):
-    lagdata_output = pd.DataFrame(index=data.index)
+def get_lag(data, lags, unit, period):
+    lagdata_output = pd.DataFrame(index=data.shift(period, freq=unit).index)
     for lag in lags:
         lagdata = data.shift(lag, freq=unit)
         lagdatanames = [colname + "lag" + str(lag) + unit for colname in data.columns]
         lagdata.columns = lagdatanames
         lagdata_output = lagdata_output.join(lagdata)
-    return lagdata_output
+    return lagdata_output.dropna()
+
+
 
 
 def get_lag_mean(data, lags, unit, meanby):
@@ -171,30 +173,31 @@ def TS_Boosting_predict(start,end,by,databaseid,collectionid):
     #     predictors = predictors.join(predictor)
 
 
-    outcomelag = get_lag(data=outcome, lags=range(2, 30), unit='D')
-    outcomelagmean = get_lag_mean(data=outcome, lags=range(14, 60), unit='D', meanby='D')
+    outcomelag = get_lag(data=outcome, lags=range(14, 30), unit='D',period =14)
+    #outcomelagmean = get_lag_mean(data=outcome, lags=range(14, 60), unit='D', meanby='D')
 
     # predictorslag = get_lag(data=predictors, lags=range(1, 10), unit='D')
     # predictorslagmean = get_lag_mean(data=predictors, lags=range(1, 10), unit='D', meanby='D')
     #
     # predictorslaglagbyh = get_lag(data=predictors, lags=range(1, 5), unit='H')
 
-    datetimefeature = gettimefeature(dtindex)
+    #datetimefeature = gettimefeature(dtindex)
 
     #featurelist = [outcomelag, outcomelagmean, predictorslag, predictorslagmean, datetimefeature]
     #fullfeature = pd.concat(featurelist, axis=1)
 
     fulllist = [outcome, outcomelag]
     fulldf = pd.concat(fulllist, axis=1).dropna()
+    forecastdf = pd.concat(fulllist, axis=1).iloc[-14:, 1:]
 
-    splitpoint = int(0.8 * len(dtindex))
-    splitdt = str(dtindex[splitpoint])
+    #splitpoint = int(0.8 * len(dtindex))
+    #splitdt = str(dtindex[splitpoint])
     xgbinpt = XGBInput(label=fulldf['y'], covariate=fulldf.drop(columns='y'), splitdt=splitdt)
 
 
     param = {
         'max_depth': 2,
-        'eta': .05,
+        'eta': .005,
         'silent': 1,
         'objective': 'reg:squarederror',
         'nthread': 5,
@@ -202,8 +205,7 @@ def TS_Boosting_predict(start,end,by,databaseid,collectionid):
     }
 
 
-    numround =300
-    early_stopping_rounds = 10
+    numround =3000
     # from pandas.plotting import register_matplotlib_converters
     # register_matplotlib_converters()
 
@@ -216,15 +218,15 @@ def TS_Boosting_predict(start,end,by,databaseid,collectionid):
     #     pickle.dump(xgbmod, f)
 
 
-    prediction =pd.DataFrame(xgbinpt.label)
+    #prediction =pd.DataFrame(xgbinpt.label)
     # print(prediction)
-    prediction2 = pd.DataFrame(xgbmod.predict(xgbinpt.ddata), index = prediction.index)
-    prediction2.columns = ['predict']
+    prediction = pd.DataFrame(xgbmod.predict(xgb.DMatrix(forecastdf)), index=forecastdf.index,)
+    prediction.columns = ['predict']
     # print(prediction2)
-    prediction = prediction.join(prediction2)
+    #prediction = prediction.join(prediction2)
     # print(prediction)
     # print(dtindex)
-    prediction['datetime'] = fulldf.index
+    prediction['datetime'] = forecastdf.index
 
 
 
