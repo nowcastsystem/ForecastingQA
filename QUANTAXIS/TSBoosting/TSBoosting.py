@@ -228,7 +228,11 @@ def TS_Boosting_predict(start,end,by,databaseid,collectionid):
     # print(dtindex)
     prediction['datetime'] = forecastdf.index
 
+    past = fulldf['y']
+    past.columns = ['predict']
+    past['datetime'] = past.index
 
+    TS_SU_save_prediction(name='prediction', prediction=prediction, client=QASETTING.client, ui_log=None)
 
-    TS_SU_save_prediction(name='prediction', prediction =prediction, client=QASETTING.client, ui_log=None)
+    #TS_SU_save_prediction(name='past', prediction=past, client=QASETTING.client, ui_log=None)
 
