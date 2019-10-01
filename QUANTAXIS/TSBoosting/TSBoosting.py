@@ -190,8 +190,8 @@ def TS_Boosting_predict(start,end,by,databaseid,collectionid):
     fulldf = pd.concat(fulllist, axis=1).dropna()
     forecastdf = pd.concat(fulllist, axis=1).iloc[-14:, 1:]
 
-    #splitpoint = int(0.8 * len(dtindex))
-    #splitdt = str(dtindex[splitpoint])
+    splitpoint = int(0.99 * len(dtindex))
+    splitdt = str(dtindex[splitpoint])
     xgbinpt = XGBInput(label=fulldf['y'], covariate=fulldf.drop(columns='y'), splitdt=splitdt)
 
 
@@ -220,7 +220,7 @@ def TS_Boosting_predict(start,end,by,databaseid,collectionid):
 
     #prediction =pd.DataFrame(xgbinpt.label)
     # print(prediction)
-    prediction = pd.DataFrame(xgbmod.predict(xgb.DMatrix(forecastdf)), index=forecastdf.index,)
+    prediction = pd.DataFrame(xgbmod.predict(xgb.DMatrix(forecastdf)), index=forecastdf.index)
     prediction.columns = ['predict']
     # print(prediction2)
     #prediction = prediction.join(prediction2)
