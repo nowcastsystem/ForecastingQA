@@ -228,11 +228,10 @@ def TS_Boosting_predict(start,end,by,databaseid,collectionid):
     # print(dtindex)
     prediction['datetime'] = forecastdf.index
 
+    past_prediction = {'predict': xgbmod.predict(xgbinpt.dtrain), 'y_t':xgbinpt.labeltrain}
 
+    past_prediction = pd.DataFrame(past_prediction, index=xgbinpt.labeltrain.index)
 
-    past_prediction = pd.DataFrame(xgbmod.predict(xgbinpt.dtrain), index=xgbinpt.labeltrain.index)
-
-    past_prediction.columns = ['predict']
     past_prediction['datetime'] = past_prediction.index
 
     TS_SU_save_prediction(name='past_prediction', prediction=past_prediction, client=QASETTING.client, ui_log=None)
