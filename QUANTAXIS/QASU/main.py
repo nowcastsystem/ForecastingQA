@@ -29,7 +29,7 @@ from QUANTAXIS.QASU import save_tdx_file as tdx_file
 from QUANTAXIS.QASU import save_gm as sgm
 from QUANTAXIS.QASU import save_jq as sjq
 from QUANTAXIS.QASU import save_tushare as sts
-from QUANTAXIS.QASU import save_financialfiles
+# from QUANTAXIS.QASU import save_financialfiles
 from QUANTAXIS.QAUtil import DATABASE, print_used_time
 import time
 
@@ -445,8 +445,8 @@ def QA_SU_crawl_eastmoney(action="zjlx", stockCode=None):
             param_stock_code_list=code_list)
 
 
-def QA_SU_save_financialfiles():
-    return save_financialfiles.QA_SU_save_financial_files()
+# def QA_SU_save_financialfiles():
+#     return save_financialfiles.QA_SU_save_financial_files()
 
 
 def QA_SU_save_report_calendar_day():

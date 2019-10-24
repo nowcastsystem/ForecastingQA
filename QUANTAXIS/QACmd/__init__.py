@@ -50,7 +50,6 @@ from QUANTAXIS.QASU.main import (
     QA_SU_save_etf_list,
     QA_SU_save_etf_day,
     QA_SU_save_etf_min,
-    QA_SU_save_financialfiles,
     QA_SU_save_option_50etf_day,
     QA_SU_save_option_50etf_min,
     QA_SU_save_option_commodity_day,
