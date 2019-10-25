@@ -212,7 +212,6 @@ from QUANTAXIS.QASetting.QALocalize import (
 from QUANTAXIS.QASU.main import (
     QA_SU_save_etf_day,
     QA_SU_save_etf_min,
-    QA_SU_save_financialfiles,
     QA_SU_save_future_list,
     QA_SU_save_index_day,
     QA_SU_save_index_list,
