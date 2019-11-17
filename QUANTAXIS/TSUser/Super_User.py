@@ -507,6 +507,25 @@ class Super_User():
         # account的存储在  portfolio.save ==> account.save 中
         # for portfolio in list(self.portfolio_list.values()):
         #     portfolio.save()
+    
+    def remove(self):
+        """
+        将QA_USER的信息从数据库中删除
+
+        """
+        if self.wechat_id is not None:
+            self.client.remove(
+                {'wechat_id': self.wechat_id},
+                {'$set': self.message},
+            )
+        else:
+            self.client.remove(
+                {
+                    'username': self.username,
+                    'password': self.password
+                },
+                {'$set': self.message},
+            )
 
     def sync(self):
         """基于账户/密码去sync数据库
