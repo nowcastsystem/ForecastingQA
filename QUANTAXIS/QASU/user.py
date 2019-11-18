@@ -42,7 +42,6 @@ def QA_user_sign_in(username, password):
     else:
         return True
 
-
 def QA_user_sign_up(name, password, client):
     """只做check! 具体逻辑需要在自己的函数中实现
 
