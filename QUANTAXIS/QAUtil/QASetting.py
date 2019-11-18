@@ -59,12 +59,10 @@ class QA_Setting():
         config = configparser.ConfigParser()
         if os.path.exists(CONFIGFILE_PATH):
             config.read(CONFIGFILE_PATH)
-
             try:
                 res = config.get('MONGODB', 'uri')
             except:
                 res = DEFAULT_DB_URI
-
         else:
             config = configparser.ConfigParser()
             config.add_section('MONGODB')

@@ -15,12 +15,15 @@ class TSRawdata2(_quotation_base):
 
         if isinstance(data, pd.DataFrame) == False:
             print("QAError data is not kind of DataFrame type !")
-
+        
+        print("processing raw data")
         #validate date
-        if len(data.columns) != 2:
-            raise ValueError(
-                'Data format not correct!'
-            )
+        data = data.iloc[:, [0, 1]]
+        # if len(data.columns) != 2:
+        #
+        #     raise ValueError(
+        #         'Data format not correct!'
+        #     )
 
 
 
@@ -32,12 +35,16 @@ class TSRawdata2(_quotation_base):
         y_column = data.loc[1]
         if date_column.dtype == np.int64:
             data.iloc[:,0] = date_column.astype(str)
+        print(data['date'])
         data['date'] = pd.to_datetime(data['date'])
+        data=data.dropna()
+        print(data['date'])
         if data['date'].dt.tz is not None:
             raise ValueError(
                 'Column date has timezone specified, which is not supported. '
                 'Remove timezone.'
             )
+        data=data.dropna()
         if data['date'].isnull().any():
             raise ValueError('Found NaN in column date.')
         print('change column name date to datetime')

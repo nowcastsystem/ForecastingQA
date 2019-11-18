@@ -172,7 +172,6 @@ def TS_Boosting_predict(start,end,by,databaseid,collectionid):
     #                                        fillin=None)
     #     predictors = predictors.join(predictor)
 
-
     outcomelag = get_lag(data=outcome, lags=range(14, 30), unit='D',period =14)
     #outcomelagmean = get_lag_mean(data=outcome, lags=range(14, 60), unit='D', meanby='D')
 
