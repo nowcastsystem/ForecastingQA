@@ -78,9 +78,13 @@ def fillinmissing(data, dtindex, fillin=None, indicator=False):
 
 def get_lag(data, lags, unit, period):
     lagdata_output = pd.DataFrame(index=data.shift(period, freq=unit).index)
+    print("lagdata_output")
+    print(lagdata_output)
     for lag in lags:
         lagdata = data.shift(lag, freq=unit)
         lagdatanames = [colname + "lag" + str(lag) + unit for colname in data.columns]
+        print(lagdatanames)
+        print("########################")
         lagdata.columns = lagdatanames
         lagdata_output = lagdata_output.join(lagdata)
     return lagdata_output.dropna()
@@ -135,6 +139,8 @@ class XGBInput(object):
 
         self.dtraintest = xgb.DMatrix(covariate, label=label)
         self.traintestindex = covariate.index
+        print("label: " + str(self.label))
+        print("label train: "+ str(self.labeltrain))
 
 
     def gettrain(self):
@@ -156,11 +162,15 @@ def TS_Boosting_predict(start,end,by,databaseid,collectionid):
                                 databaseid=databaseid, collectionid=collectionid)
     outcome = rawdata.data
     outcome.set_index('datetime', inplace=True)
+    print(outcome)
     outcome, isencoded = fillinmissing(data=outcome,
                                      dtindex=dtindex,
                                      fillin=0,
                                      indicator=True)
-
+    print("outcome")
+    print(outcome)
+    print(type(outcome))
+    print("done w/ outcome")
     # predictors = pd.DataFrame(index=dtindex)
     #
     #
@@ -173,6 +183,8 @@ def TS_Boosting_predict(start,end,by,databaseid,collectionid):
     #     predictors = predictors.join(predictor)
 
     outcomelag = get_lag(data=outcome, lags=range(14, 30), unit='D',period =14)
+    print("outcome lag:  ")
+    print(outcomelag)
     #outcomelagmean = get_lag_mean(data=outcome, lags=range(14, 60), unit='D', meanby='D')
 
     # predictorslag = get_lag(data=predictors, lags=range(1, 10), unit='D')
@@ -186,7 +198,9 @@ def TS_Boosting_predict(start,end,by,databaseid,collectionid):
     #fullfeature = pd.concat(featurelist, axis=1)
 
     fulllist = [outcome, outcomelag]
+    print(fulllist)
     fulldf = pd.concat(fulllist, axis=1).dropna()
+    print(fulldf['y'])
     forecastdf = pd.concat(fulllist, axis=1).iloc[-14:, 1:]
 
     splitpoint = int(0.99 * len(dtindex))
@@ -207,6 +221,9 @@ def TS_Boosting_predict(start,end,by,databaseid,collectionid):
     numround =3000
     # from pandas.plotting import register_matplotlib_converters
     # register_matplotlib_converters()
+
+    print("xgbinpt.dtrain")
+    print(xgbinpt.dtrain)
 
     xgbmod = xgb.train(param, xgbinpt.dtrain, numround, xgbinpt.evallist, early_stopping_rounds=10)
 

@@ -19,12 +19,12 @@ class TSRawdata2(_quotation_base):
         print("processing raw data")
         #validate date
         data = data.iloc[:, [0, 1]]
+
         # if len(data.columns) != 2:
         #
         #     raise ValueError(
         #         'Data format not correct!'
         #     )
-
 
 
         # print('date')
@@ -35,18 +35,26 @@ class TSRawdata2(_quotation_base):
         y_column = data.loc[1]
         if date_column.dtype == np.int64:
             data.iloc[:,0] = date_column.astype(str)
-        print(data['date'])
+        
+        print(data)
+        data.dropna(axis=0, how="any", inplace=True)
+        #data.reset_index(inplace=True)
+        #data.fillna(0, inplace=True)
         data['date'] = pd.to_datetime(data['date'])
-        data=data.dropna()
-        print(data['date'])
+        print(data)
+        print(data.shape)
+
+        # manage duplicated dates
+        data.drop_duplicates(subset='date', inplace=True)
+        
         if data['date'].dt.tz is not None:
             raise ValueError(
                 'Column date has timezone specified, which is not supported. '
                 'Remove timezone.'
             )
-        data=data.dropna()
-        if data['date'].isnull().any():
-            raise ValueError('Found NaN in column date.')
+
+        # if data['date'].isnull().any():
+        #     raise ValueError('Found NaN in column date.')
         print('change column name date to datetime')
         data['date'] = data['date'].dt.date
         data['datetime'] = data['date']
