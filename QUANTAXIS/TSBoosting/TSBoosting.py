@@ -78,20 +78,18 @@ def fillinmissing(data, dtindex, fillin=None, indicator=False):
 
 def get_lag(data, lags, unit, period):
     lagdata_output = pd.DataFrame(index=data.shift(period, freq=unit).index)
-    print("lagdata_output")
-    print(lagdata_output)
+
     for lag in lags:
-        print("lagdata before shift")
-        print(data)
+        # print("lagdata before shift")
+        # print(data)
         lagdata = data.shift(lag, freq=unit)
-        print("lagdata after shift")
-        print(lagdata)
+        # print("lagdata after shift")
+        # print(lagdata)
         lagdatanames = [colname + "lag" + str(lag) + unit for colname in data.columns]
-        print(lagdatanames)
-        print("########################")
+        # print(lagdatanames)
+        # print("########################")
         lagdata.columns = lagdatanames
         lagdata_output = lagdata_output.join(lagdata)
-        print(lagdata_output)
     return lagdata_output.dropna()
 
 
@@ -172,7 +170,6 @@ def TS_Boosting_predict(start,end,by,databaseid,collectionid):
                                      dtindex=dtindex,
                                      fillin=0,
                                      indicator=True)
-    print(outcome)
     # predictors = pd.DataFrame(index=dtindex)
     #
     #
@@ -185,8 +182,7 @@ def TS_Boosting_predict(start,end,by,databaseid,collectionid):
     #     predictors = predictors.join(predictor)
 
     outcomelag = get_lag(data=outcome, lags=range(14, 30), unit='D',period =14)
-    print("outcome lag...")
-    print(outcomelag)
+
     #outcomelagmean = get_lag_mean(data=outcome, lags=range(14, 60), unit='D', meanby='D')
 
     # predictorslag = get_lag(data=predictors, lags=range(1, 10), unit='D')

@@ -35,16 +35,15 @@ class TSRawdata2(_quotation_base):
         if date_column.dtype == np.int64:
             data.iloc[:,0] = date_column.astype(str)
         
-        #data.dropna(axis=0, how="any", inplace=True)
-        print(data)
-        print(data.datetime)
-        print(type(data.datetime))
+        # print(data)
+        # print(data.datetime)
+        # print(type(data.datetime))
 
         data['datetime'] = pd.to_datetime(data['datetime'])
-        print("after set to datetime")
-        print(data)
-        print(data.datetime)
-        print(type(data.datetime))
+        # print("after set to datetime")
+        # print(data)
+        # print(data.datetime)
+        # print(type(data.datetime))
 
         # manage duplicated dates
         data['datetime'] = data['datetime'].dt.to_period(freq = 'D').astype(str)
@@ -60,17 +59,10 @@ class TSRawdata2(_quotation_base):
                 'Dataset does not contain sufficient number of data entry. Please increase your data size.'
             )
         
-        print('preprocessed duplicated dates...')
-        print(data)
-        print(data.datetime)
-        print(type(data.datetime))
-
-        # data.date = data.date.T.squeeze().astype(object)
-        # print("adter squeeze")
+        # print('preprocessed duplicated dates...')
         # print(data)
-        # print(data.date)
-        # print(type(data.date))
-        
+        # print(data.datetime)
+        # print(type(data.datetime))        
         
         if data['datetime'].dt.tz is not None:
             raise ValueError(
