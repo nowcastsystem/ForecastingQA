@@ -81,12 +81,17 @@ def get_lag(data, lags, unit, period):
     print("lagdata_output")
     print(lagdata_output)
     for lag in lags:
+        print("lagdata before shift")
+        print(data)
         lagdata = data.shift(lag, freq=unit)
+        print("lagdata after shift")
+        print(lagdata)
         lagdatanames = [colname + "lag" + str(lag) + unit for colname in data.columns]
         print(lagdatanames)
         print("########################")
         lagdata.columns = lagdatanames
         lagdata_output = lagdata_output.join(lagdata)
+        print(lagdata_output)
     return lagdata_output.dropna()
 
 
@@ -152,7 +157,7 @@ class XGBInput(object):
 
 
 def TS_Boosting_predict(start,end,by,databaseid,collectionid):
-    print('test')
+    print('Start boosting...')
     dtindex = pd.date_range(start=start,
                             end=end,
                             freq=by)
@@ -162,15 +167,12 @@ def TS_Boosting_predict(start,end,by,databaseid,collectionid):
                                 databaseid=databaseid, collectionid=collectionid)
     outcome = rawdata.data
     outcome.set_index('datetime', inplace=True)
-    print(outcome)
+
     outcome, isencoded = fillinmissing(data=outcome,
                                      dtindex=dtindex,
                                      fillin=0,
                                      indicator=True)
-    print("outcome")
     print(outcome)
-    print(type(outcome))
-    print("done w/ outcome")
     # predictors = pd.DataFrame(index=dtindex)
     #
     #
@@ -183,7 +185,7 @@ def TS_Boosting_predict(start,end,by,databaseid,collectionid):
     #     predictors = predictors.join(predictor)
 
     outcomelag = get_lag(data=outcome, lags=range(14, 30), unit='D',period =14)
-    print("outcome lag:  ")
+    print("outcome lag...")
     print(outcomelag)
     #outcomelagmean = get_lag_mean(data=outcome, lags=range(14, 60), unit='D', meanby='D')
 
@@ -198,10 +200,12 @@ def TS_Boosting_predict(start,end,by,databaseid,collectionid):
     #fullfeature = pd.concat(featurelist, axis=1)
 
     fulllist = [outcome, outcomelag]
-    print(fulllist)
+    #print(fulllist)
     fulldf = pd.concat(fulllist, axis=1).dropna()
-    print(fulldf['y'])
+    #print(fulldf['y'])
     forecastdf = pd.concat(fulllist, axis=1).iloc[-14:, 1:]
+    print("forecase dataframe...")
+    print(forecastdf)
 
     splitpoint = int(0.99 * len(dtindex))
     splitdt = str(dtindex[splitpoint])

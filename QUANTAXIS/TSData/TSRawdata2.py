@@ -30,24 +30,49 @@ class TSRawdata2(_quotation_base):
         # print('date')
         date_column = data.iloc[:, 0]
         # data.columns.values[0] = "date"
-        data.columns = ['date', 'y']
+        data.columns = ['datetime', 'y']
         # print(type(data['date']))
-        y_column = data.loc[1]
         if date_column.dtype == np.int64:
             data.iloc[:,0] = date_column.astype(str)
         
+        #data.dropna(axis=0, how="any", inplace=True)
         print(data)
-        data.dropna(axis=0, how="any", inplace=True)
-        #data.reset_index(inplace=True)
-        #data.fillna(0, inplace=True)
-        data['date'] = pd.to_datetime(data['date'])
+        print(data.datetime)
+        print(type(data.datetime))
+
+        data['datetime'] = pd.to_datetime(data['datetime'])
+        print("after set to datetime")
         print(data)
-        print(data.shape)
+        print(data.datetime)
+        print(type(data.datetime))
 
         # manage duplicated dates
-        data.drop_duplicates(subset='date', inplace=True)
+        data['datetime'] = data['datetime'].dt.to_period(freq = 'D').astype(str)
+        data.drop_duplicates(subset='datetime', inplace=True)
+        data.dropna(inplace=True)
+        data = data.reset_index(drop=True)
+        data.iloc[:,0] = data.iloc[:,0].astype(str)
+        data['datetime'] = pd.to_datetime(data['datetime'])
+
+        # check post-processed data size
+        if len(data.index) < 16:
+            raise ValueError(
+                'Dataset does not contain sufficient number of data entry. Please increase your data size.'
+            )
         
-        if data['date'].dt.tz is not None:
+        print('preprocessed duplicated dates...')
+        print(data)
+        print(data.datetime)
+        print(type(data.datetime))
+
+        # data.date = data.date.T.squeeze().astype(object)
+        # print("adter squeeze")
+        # print(data)
+        # print(data.date)
+        # print(type(data.date))
+        
+        
+        if data['datetime'].dt.tz is not None:
             raise ValueError(
                 'Column date has timezone specified, which is not supported. '
                 'Remove timezone.'
@@ -55,14 +80,14 @@ class TSRawdata2(_quotation_base):
 
         # if data['date'].isnull().any():
         #     raise ValueError('Found NaN in column date.')
-        print('change column name date to datetime')
-        data['date'] = data['date'].dt.date
-        data['datetime'] = data['date']
-        data = data.drop(columns='date')
+
+        # print('change column name date to datetime')
+        # data['date'] = data['date'].dt.date
+        # data['datetime'] = data['date']
+        # data = data.drop(columns='date')
 
         if np.isinf(data['y'].values).any():
             raise ValueError('Found infinity in column y.')
-
 
         #The first two columns will be date(0) and y(1)
         df_date = data['datetime']
