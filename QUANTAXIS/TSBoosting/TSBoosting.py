@@ -160,6 +160,8 @@ def TS_Boosting_predict(start,end,by,databaseid,collectionid):
                             end=end,
                             freq=by)
 
+    print("date index...")
+    print(dtindex)
 
     rawdata = getrawfrommongodb(start=start, end=end,
                                 databaseid=databaseid, collectionid=collectionid)
@@ -200,11 +202,9 @@ def TS_Boosting_predict(start,end,by,databaseid,collectionid):
     fulldf = pd.concat(fulllist, axis=1).dropna()
     #print(fulldf['y'])
     forecastdf = pd.concat(fulllist, axis=1).iloc[-14:, 1:]
-    print("forecase dataframe...")
-    print(forecastdf)
-
     splitpoint = int(0.99 * len(dtindex))
     splitdt = str(dtindex[splitpoint])
+
     xgbinpt = XGBInput(label=fulldf['y'], covariate=fulldf.drop(columns='y'), splitdt=splitdt)
 
 
